@@ -4,7 +4,6 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({ subsets: ["latin"] });
-//const geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.className} antialiased text-gray-900`}>
-        <Navbar />
+        {<Navbar />}
         {children}
       </body>
     </html>
