@@ -56,7 +56,7 @@ export default function TrustedManufacturers() {
             {manufacturers.map((m, i) => (
               <div
                 key={`${m.id}-${i}`}
-                className="min-w-[180px] flex items-center justify-center"
+                className="min-w-45 flex items-center justify-center"
               >
                 <Image
                   src={m.logo_url}
