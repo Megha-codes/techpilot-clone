@@ -86,7 +86,7 @@ export default function Hero() {
           transition={{ duration: 0.7 }}
           className="text-4xl md:text-6xl font-extrabold text-gray-900"
         >
-          RFX <span className="text-blue-600">P-A-A-S</span>
+          EsyProcure <span className="text-blue-600">P-A-A-S</span>
         </motion.h1>
 
         {/* H2 */}

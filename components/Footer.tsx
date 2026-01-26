@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="bg-blue-50 border-t border-gray-300">
       <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-10">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">RFX</h3>
+          <h3 className="text-xl font-bold text-gray-900">EsyProcure</h3>
           <p className="mt-3 text-sm text-gray-600 max-w-xs">
             Procurement-as-a-Service platform built for the Indian
             manufacturing ecosystem.
@@ -54,7 +54,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-gray-300 py-4">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500 gap-2">
-          <span>© {new Date().getFullYear()} RFX. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} EsyProcure. All rights reserved.</span>
           <div className="flex gap-4">
             <Link href="/privacy">Privacy Policy</Link>
             <Link href="/terms">Terms of Service</Link>

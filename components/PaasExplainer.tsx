@@ -44,7 +44,7 @@ export default function PaasExplainer() {
             viewport={{ once: true }}
             className="text-3xl font-bold text-blue-700"
           >
-            How RFX P-A-A-S Works
+            How EsyProcure P-A-A-S Works
           </motion.h2>
 
           <div className="mt-8 space-y-6">

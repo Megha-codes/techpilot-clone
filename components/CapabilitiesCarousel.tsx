@@ -20,7 +20,6 @@ const capabilities = [
   { title: "Water Jet Cutting", icon: FaWater },
 ];
 
-// duplicate for seamless loop
 const items = [...capabilities, ...capabilities];
 
 export default function CapabilitiesCarousel() {

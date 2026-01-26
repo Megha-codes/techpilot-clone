@@ -1,17 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { FaCog, FaTools, FaIndustry } from "react-icons/fa";
 import { supabase } from "@/lib/supabaseClient";
 
+type Role = "buyer" | "manufacturer";
+
 export default function LoginPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"buyer" | "manufacturer">("buyer");
+  const [role, setRole] = useState<Role>("buyer");
   const [loading, setLoading] = useState(false);
 
+  /* 🔑 AUTH STATE LISTENER (THIS IS THE KEY FIX) */
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profile?.role === "buyer") {
+          router.replace("/dashboard");
+        } else if (profile?.role === "manufacturer") {
+          router.replace("/manufacturer/onboarding");
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]);
+
+  /* EMAIL LOGIN / SIGNUP */
   const handleEmailAuth = async () => {
     setLoading(true);
 
@@ -27,6 +56,7 @@ export default function LoginPage() {
         email,
         password,
       });
+
       user = signUpData.user;
 
       if (user) {
@@ -37,24 +67,22 @@ export default function LoginPage() {
       }
     }
 
-    window.location.href =
-      role === "buyer" ? "/rfq" : "/manufacturers";
-
     setLoading(false);
   };
 
+  /* GOOGLE LOGIN */
   const handleGoogleLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin,
+        redirectTo: `${window.location.origin}/login`,
       },
     });
   };
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-white flex items-center justify-center px-6">
-      {/* 🔵 Floating grid / dot pattern */}
+      {/* Background */}
       <div
         className="absolute inset-0 opacity-[0.25]"
         style={{
@@ -64,19 +92,20 @@ export default function LoginPage() {
         }}
       />
 
-      {/* 🔵 Animated blue blobs */}
+      {/* Animated blobs */}
       <motion.div
         className="absolute -top-40 -left-40 w-130 h-130 bg-blue-200 rounded-full blur-3xl opacity-40"
         animate={{ x: [0, 60, 0], y: [0, 40, 0] }}
         transition={{ duration: 14, repeat: Infinity }}
       />
+
       <motion.div
         className="absolute bottom-50 right-50 w-130 h-130 bg-blue-300 rounded-full blur-3xl opacity-30"
         animate={{ x: [0, -50, 0], y: [0, -30, 0] }}
         transition={{ duration: 16, repeat: Infinity }}
       />
 
-      {/* 🏭 Floating mechanical icons */}
+      {/* Icons */}
       <motion.div
         className="absolute top-24 left-16 text-blue-300 opacity-40"
         animate={{ rotate: 360 }}
@@ -101,7 +130,7 @@ export default function LoginPage() {
         <FaIndustry size={44} />
       </motion.div>
 
-      {/* 🔐 Glassmorphism Auth Card */}
+      {/* Auth Card */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -109,31 +138,22 @@ export default function LoginPage() {
         className="relative z-10 w-full max-w-md rounded-2xl border border-white/30
                    bg-white/70 backdrop-blur-xl shadow-soft p-8"
       >
-        {/* Animated Header */}
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-3xl font-bold text-gray-900 mb-1"
-        >
-          Welcome to <span className="text-blue-600">RFX</span>
-        </motion.h1>
+        <h1 className="text-3xl font-bold mb-1">
+          Welcome to <span className="text-blue-600">EsyProcure</span>
+        </h1>
 
         <p className="text-gray-600 mb-6">
           Login or create an account to continue
         </p>
 
-        {/* Role */}
         <label className="text-sm font-medium text-gray-700">
           I am a
         </label>
+
         <select
-          className="w-full mt-1 mb-4 p-3 rounded-lg border border-gray-300
-                     focus:ring-2 focus:ring-blue-300 outline-none"
+          className="w-full mt-1 mb-4 p-3 rounded-lg border border-gray-300"
           value={role}
-          onChange={(e) =>
-            setRole(e.target.value as "buyer" | "manufacturer")
-          }
+          onChange={(e) => setRole(e.target.value as Role)}
         >
           <option value="buyer">Buyer</option>
           <option value="manufacturer">Manufacturer</option>
@@ -142,8 +162,7 @@ export default function LoginPage() {
         <input
           type="email"
           placeholder="Email"
-          className="w-full mb-3 p-3 rounded-lg border border-gray-300
-                     focus:ring-2 focus:ring-blue-300 outline-none"
+          className="w-full mb-3 p-3 rounded-lg border border-gray-300"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -151,41 +170,33 @@ export default function LoginPage() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full mb-5 p-3 rounded-lg border border-gray-300
-                     focus:ring-2 focus:ring-blue-300 outline-none"
+          className="w-full mb-5 p-3 rounded-lg border border-gray-300"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        {/* ✅ Always-visible primary CTA */}
         <button
           onClick={handleEmailAuth}
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-xl
-                     font-semibold text-lg hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold"
         >
           {loading ? "Please wait…" : "Login / Sign up"}
         </button>
 
         <div className="flex items-center my-6">
-          <div className="grow border-t border-gray-300" />
+          <div className="grow border-t" />
           <span className="px-3 text-sm text-gray-400">OR</span>
-          <div className="grow border-t border-gray-300" />
+          <div className="grow border-t" />
         </div>
 
         <button
           onClick={handleGoogleLogin}
           className="w-full flex items-center justify-center gap-3 py-3
-                     rounded-xl border border-gray-300 font-medium
-                     text-gray-800 hover:bg-gray-50 transition"
+                     rounded-xl border border-gray-300 font-medium"
         >
           <FcGoogle size={22} />
           Continue with Google
         </button>
-
-        <p className="mt-4 text-xs text-gray-500 text-center">
-          New users will be automatically registered.
-        </p>
       </motion.div>
     </main>
   );

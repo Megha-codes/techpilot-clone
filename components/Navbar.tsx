@@ -53,7 +53,7 @@ export default function Navbar() {
           href="/"
           className="text-xl font-extrabold text-gray-900 tracking-wide"
         >
-          RFX
+          EsyProcure
         </Link>
 
         {/* Nav Links */}

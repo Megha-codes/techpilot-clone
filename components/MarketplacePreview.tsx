@@ -79,7 +79,7 @@ export default function MarketplacePreview() {
             <Feature
               icon={FaUsers}
               title="One Access, Multiple Solutions"
-              text="Single account access across marketplace tools and RFX products."
+              text="Single account access across marketplace tools and EsyProcure products."
             />
           </div>
 
